@@ -1,0 +1,30 @@
+import { test, expect } from '@playwright/test';
+
+test('has title', async ({ page }) => {
+  await page.goto('https://arifbudiman.com/news');
+  await expect(page).toHaveTitle('Hacker News Digest - Arif Budiman');
+  page.close();
+});
+
+test('has Hacker News', async ({page}) => {
+  await page.goto('https://arifbudiman.com/news');
+  await expect(page.locator('body > div > main > section > h1')).toHaveText('Hacker News');
+
+  await expect(page.locator('body > div > main > section > div > article:nth-child(29)')).toBeVisible();
+
+  for (const article of await page.locator('body > div > main > section > div > article').all()) {
+    await expect(article.locator('a').first()).toBeAttached();
+    const articleLink = await article.locator('a').first().getAttribute('href');
+    expect(articleLink).toContain('https://');
+    //console.log(await article.locator('a').first().getAttribute('href'));
+
+    await expect(article.locator('time')).toBeAttached();
+    const articleDateTime = await article.locator('time').getAttribute('datetime');
+    const dateTime = new Date(articleDateTime);
+    expect(isNaN(dateTime)).toBeFalsy();
+    expect(dateTime.toISOString()).toBe(articleDateTime);
+    // console.log(articleDateTime + ' vs. ' + dateTime)
+  }
+
+  page.close();
+})
