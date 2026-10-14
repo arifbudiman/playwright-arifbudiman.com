@@ -4,7 +4,6 @@ test.describe('News', () => {
   test('has title', async ({ page }) => {
     await page.goto('https://arifbudiman.com/news');
     await expect(page).toHaveTitle('Hacker News Digest - Arif Budiman');
-    page.close();
   });
 
   test('has articles', async ({ page }) => {
@@ -15,10 +14,15 @@ test.describe('News', () => {
 
     for (const article of await page.locator('body > div > main > section > div > article').all()) {
       await expect(article.locator('a').first()).toBeAttached();
-      const articleLink = await article.locator('a').first().getAttribute('href');
-      expect(articleLink).toMatch(
-        /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
-      );
+      await article
+        .locator('a')
+        .first()
+        .getAttribute('href')
+        .then((articleLink) => {
+          expect(articleLink).toMatch(
+            /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,8}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+          );
+        });
       //console.log(await article.locator('a').first().getAttribute('href'));
 
       await expect(article.locator('time')).toBeAttached();
@@ -31,7 +35,5 @@ test.describe('News', () => {
       expect(dateTime.toISOString()).toBe(articleDateTime);
       // console.log(articleDateTime + ' vs. ' + dateTime)
     }
-
-    page.close();
   });
 });

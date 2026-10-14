@@ -4,7 +4,6 @@ test.describe('Home', () => {
   test('has title', async ({ page }) => {
     await page.goto('https://arifbudiman.com/');
     await expect(page).toHaveTitle('Arif Budiman');
-    page.close();
   });
 
   test('has hero image', async ({ page }) => {
@@ -15,7 +14,6 @@ test.describe('Home', () => {
     await expect(heroImage).not.toHaveJSProperty('naturalWidth', 0);
     await expect(heroImage).toHaveAttribute('src');
     await expect(heroImage).toHaveAttribute('srcset');
-    page.close();
   });
 
   test('has News link on hero', async ({ page }) => {
@@ -23,7 +21,6 @@ test.describe('Home', () => {
     await expect(page.locator('body > div > main > section > div > div > a:nth-child(1)')).toHaveText('News');
     await page.locator('body > div > main > section > div > div > a:nth-child(1)').click();
     await expect(page).toHaveTitle('Hacker News Digest - Arif Budiman');
-    page.close();
   });
 
   test('has Radio link on hero', async ({ page }) => {
@@ -31,7 +28,6 @@ test.describe('Home', () => {
     await expect(page.locator('body > div > main > section > div > div > a:nth-child(2)')).toHaveText('Radio');
     await page.locator('body > div > main > section > div > div > a:nth-child(2)').click();
     await expect(page).toHaveTitle('Jakarta Radio Stations - Arif Budiman');
-    page.close();
   });
 
   test('has TV link on hero', async ({ page }) => {
@@ -39,7 +35,6 @@ test.describe('Home', () => {
     await expect(page.locator('body > div > main > section > div > div > a:nth-child(3)')).toHaveText('TV');
     await page.locator('body > div > main > section > div > div > a:nth-child(3)').click();
     await expect(page).toHaveTitle('World TV Stations - Arif Budiman');
-    page.close();
   });
 
   test('has recent plays', async ({ page }) => {
@@ -54,7 +49,5 @@ test.describe('Home', () => {
       await expect(song.locator('div:nth-child(2) > p > a')).toBeAttached();
       //console.log(await song.locator('div:nth-child(2) > p > a').innerText())
     }
-
-    page.close();
   });
 });

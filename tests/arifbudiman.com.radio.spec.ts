@@ -6,19 +6,16 @@ test.describe('Radio', () => {
   test('has initial title', async ({ page }) => {
     await page.goto(url);
     await expect(page).toHaveTitle('Jakarta Radio Stations - Arif Budiman');
-    page.close();
   });
 
   test('has list of stations', async ({ page }) => {
     await page.goto(url);
     await expect(page.locator('body > div > main > section > h2').getByText('Stations')).toBeAttached();
-    page.close();
   });
 
   test('has no list of recently played', async ({ page }) => {
     await page.goto(url);
     await expect(page.locator('body > div > main > section > h2:has-text("Recently Played")')).not.toBeAttached();
-    page.close();
   });
 
   test('play a station', async ({ page }) => {
@@ -47,7 +44,5 @@ test.describe('Radio', () => {
     console.log(localStorageLastStation);
 
     expect(recentStation).toEqual(localStorageLastStation);
-
-    page.close();
   });
 });
