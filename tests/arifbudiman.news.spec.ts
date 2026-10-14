@@ -20,8 +20,11 @@ test('has Hacker News', async ({page}) => {
 
     await expect(article.locator('time')).toBeAttached();
     const articleDateTime = await article.locator('time').getAttribute('datetime');
+    expect(articleDateTime).not.toBeNull();
+    if (!articleDateTime) throw new Error('Missing datetime attribute on article time element');
+
     const dateTime = new Date(articleDateTime);
-    expect(isNaN(dateTime)).toBeFalsy();
+    expect(isNaN(dateTime.getTime())).toBeFalsy();
     expect(dateTime.toISOString()).toBe(articleDateTime);
     // console.log(articleDateTime + ' vs. ' + dateTime)
   }
