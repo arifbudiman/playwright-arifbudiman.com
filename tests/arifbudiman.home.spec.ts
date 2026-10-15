@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
 
+const url = 'https://arifbudiman.com/';
+
 test.describe('Home', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('https://arifbudiman.com/');
+    await page.goto(url);
   });
 
   test('has title', async ({ page }) => {

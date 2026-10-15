@@ -3,24 +3,23 @@ import { test, expect } from '@playwright/test';
 const url = 'https://arifbudiman.com/radio';
 
 test.describe('Radio', () => {
-  test('has initial title', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto(url);
+  });
+
+  test('has initial title', async ({ page }) => {
     await expect(page).toHaveTitle('Jakarta Radio Stations - Arif Budiman');
   });
 
   test('has list of stations', async ({ page }) => {
-    await page.goto(url);
     await expect(page.locator('body > div > main > section > h2').getByText('Stations')).toBeAttached();
   });
 
   test('has no list of recently played', async ({ page }) => {
-    await page.goto(url);
     await expect(page.locator('body > div > main > section > h2:has-text("Recently Played")')).not.toBeAttached();
   });
 
   test('play a station', async ({ page }) => {
-    await page.goto(url);
-
     await page.localStorage.clear();
 
     await expect(page.locator('h2:has-text("Stations")')).toBeAttached();

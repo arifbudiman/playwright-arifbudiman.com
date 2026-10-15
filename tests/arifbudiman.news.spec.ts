@@ -1,13 +1,17 @@
 import { test, expect } from '@playwright/test';
 
+const url = 'https://arifbudiman.com/news';
+
 test.describe('News', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(url);
+  });
+
   test('has title', async ({ page }) => {
-    await page.goto('https://arifbudiman.com/news');
     await expect(page).toHaveTitle('Hacker News Digest - Arif Budiman');
   });
 
   test('has articles', async ({ page }) => {
-    await page.goto('https://arifbudiman.com/news');
     await expect(page.locator('body > div > main > section > h1')).toHaveText('Hacker News');
 
     await expect(page.locator('body > div > main > section > div > article:nth-child(29)')).toBeVisible();
