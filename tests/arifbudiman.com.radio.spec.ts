@@ -34,13 +34,13 @@ test.describe('Radio', () => {
     const recentStation = await page
       .locator('body > div > main > section > div > h2:has-text("Recently Played") + div img:nth-child(1)')
       .getAttribute('title');
-    console.log(recentStation);
 
     const localStorageLastStation = await page.localStorage.getItem('radio_recent_stations').then((d) => {
       expect(d).not.toBeNull();
       return JSON.parse(d)[0].name;
     });
-    console.log(localStorageLastStation);
+
+    console.log(localStorageLastStation + ' vs. ' + recentStation);
 
     expect(recentStation).toEqual(localStorageLastStation);
   });
