@@ -14,7 +14,7 @@ test.describe('Report Spam', () => {
 
     files
       .filter((file) => file.toLowerCase().endsWith('.eml'))
-      .forEach((file) => {
+      .forEach((file, index, array) => {
         const fullPath = path.join(rawMailFolder, file);
 
         if (fs.statSync(fullPath).isFile()) {
@@ -42,8 +42,10 @@ test.describe('Report Spam', () => {
               const dateLabel = day + ', ' + month + ', ' + year;
               // Open date selector
               const datePickerId = await page.getByText('Incident date').getAttribute('for');
-              await page.locator('#' + datePickerId).click();
-              //await page.locator('i[data-icon-name=Calendar]').click();
+              const datePicker = page.locator('#' + datePickerId);
+              await datePicker.click();
+              const calendarIcon = page.locator('i[data-icon-name=Calendar]');
+              await calendarIcon.click();
               await page.waitForTimeout(1000);
 
               // Select incident date
@@ -105,23 +107,25 @@ test.describe('Report Spam', () => {
             console.log(file);
 
             // Wait 5 seconds
-            await page.waitForTimeout(5000);
+            // await page.waitForTimeout(5000);
 
             // Submit report
             await page.locator('button[form=report-abuse-form]').last().click();
 
-            page.on('response', (response) => {
+            page.on('response', async (response) => {
               if (response.status() === 429) {
                 console.warn(`Hit 429 Too Many Requests on: ${response.url()}`);
-                const retryAfter = response.headers()['retry-after'];
-                console.log(`Retry-After header: ${retryAfter}`);
-                page.waitForTimeout(retryAfter ? (parseInt(retryAfter, 10) + 1) * 1000 : 21);
+                const data = await response.json();
+                console.log(`Response.json: ${data}`);
+                page.waitForTimeout(21000);
                 page.locator('button[form=report-abuse-form]').last().click();
               }
             });
 
             // Wait 5 seconds
-            await page.waitForTimeout(5000);
+            if (index < array.length - 1) {
+              await page.waitForTimeout(5000);
+            }
           });
         }
       });
