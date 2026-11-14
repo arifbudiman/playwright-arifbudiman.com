@@ -104,7 +104,7 @@ test.describe('Report Spam', () => {
               buffer: contentBuffer,
             });
 
-            console.log(file);
+            console.log(file + ' ' + date?.raw);
 
             // Wait 5 seconds
             // await page.waitForTimeout(5000);
@@ -117,7 +117,9 @@ test.describe('Report Spam', () => {
                 console.warn(`Hit 429 Too Many Requests on: ${response.url()}`);
                 const data = await response.json();
                 console.log(`Response.json: ${data}`);
-                page.waitForTimeout(21000);
+                const match = data.message.match(/(\d+)\s+seconds/);
+                const seconds = match ? parseInt(match[1], 10) : 20;
+                page.waitForTimeout((seconds + 2) * 1000);
                 page.locator('button[form=report-abuse-form]').last().click();
               }
             });
