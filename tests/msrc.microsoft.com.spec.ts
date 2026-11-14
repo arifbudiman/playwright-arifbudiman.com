@@ -119,8 +119,9 @@ test.describe('Report Spam', () => {
                 console.log(`Response.json: ${data}`);
                 const match = data.message.match(/(\d+)\s+seconds/);
                 const seconds = match ? parseInt(match[1], 10) : 20;
-                page.waitForTimeout((seconds + 2) * 1000);
-                page.locator('button[form=report-abuse-form]').last().click();
+                page.waitForTimeout((seconds + 2) * 1000).then(() => {
+                  page.locator('button[form=report-abuse-form]').last().click();
+                });
               }
             });
 
