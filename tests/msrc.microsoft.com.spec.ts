@@ -112,7 +112,7 @@ test.describe('Report Spam', () => {
             // await page.waitForTimeout(5000);
 
             // Submit report
-            await page.locator('button[form=report-abuse-form]').last().click();
+            page.locator('button[form=report-abuse-form]').last().click();
 
             page.on('response', async (response) => {
               if (response.status() === 429) {
@@ -121,14 +121,14 @@ test.describe('Report Spam', () => {
                 console.log(`Response.json: ${data.message}`);
                 const match = data.message.match(/(\d+)\s+seconds/);
                 const seconds = match ? parseInt(match[1], 10) : 20;
-                await page.waitForTimeout((seconds + 2) * 1000);
-                await page.locator('button[form=report-abuse-form]').last().click();
+                page.waitForTimeout((seconds + 2) * 1000);
+                page.locator('button[form=report-abuse-form]').last().click();
               }
             });
 
             // Wait 5 seconds
             if (index < array.length - 1) {
-              await page.waitForTimeout(2500);
+              page.waitForTimeout(2500);
             }
           });
         }
