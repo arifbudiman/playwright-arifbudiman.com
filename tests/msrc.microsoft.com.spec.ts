@@ -118,12 +118,11 @@ test.describe('Report Spam', () => {
               if (response.status() === 429) {
                 console.warn(`Hit 429 Too Many Requests on: ${response.url()}`);
                 const data = await response.json();
-                console.log(`Response.json: ${data}`);
+                console.log(`Response.json: ${data.message}`);
                 const match = data.message.match(/(\d+)\s+seconds/);
                 const seconds = match ? parseInt(match[1], 10) : 20;
-                await page.waitForTimeout((seconds + 2) * 1000).then(async () => {
-                  await page.locator('button[form=report-abuse-form]').last().click();
-                });
+                await page.waitForTimeout((seconds + 2) * 1000);
+                await page.locator('button[form=report-abuse-form]').last().click();
               }
             });
 
