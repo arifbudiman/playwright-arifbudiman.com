@@ -40,16 +40,18 @@ test.describe('Report Spam', () => {
               const month = date.parsed.toLocaleString('default', { month: 'long' });
               const day = date.parsed.getDate();
               const dateLabel = day + ', ' + month + ', ' + year;
+
               // Open date selector
               const datePickerId = await page.getByText('Incident date').getAttribute('for');
               const datePicker = page.locator('#' + datePickerId);
-              await datePicker.click();
-              const calendarIcon = page.locator('i[data-icon-name=Calendar]');
-              await calendarIcon.click();
-              await page.waitForTimeout(1000);
-
-              // Select incident date
-              await page.getByLabel(dateLabel, { exact: true }).locator('..').click();
+              await datePicker.click().then(async () => {
+                const calendarIcon = page.locator('i[data-icon-name=Calendar]');
+                await calendarIcon.click().then(async () => {
+                  await page.waitForTimeout(1000);
+                  // Select incident date
+                  await page.getByLabel(dateLabel, { exact: true }).locator('..').click();
+                });
+              });
 
               // Construct incident time
               const hours = date.parsed.getHours();
@@ -119,8 +121,8 @@ test.describe('Report Spam', () => {
                 console.log(`Response.json: ${data}`);
                 const match = data.message.match(/(\d+)\s+seconds/);
                 const seconds = match ? parseInt(match[1], 10) : 20;
-                page.waitForTimeout((seconds + 2) * 1000).then(() => {
-                  page.locator('button[form=report-abuse-form]').last().click();
+                await page.waitForTimeout((seconds + 2) * 1000).then(async () => {
+                  await page.locator('button[form=report-abuse-form]').last().click();
                 });
               }
             });
