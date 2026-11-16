@@ -127,7 +127,7 @@ test.describe('Report Spam', () => {
 
             // Wait 5 seconds
             if (index < array.length - 1) {
-              await page.waitForTimeout(5000);
+              await page.waitForTimeout(2500);
             }
           });
         }
