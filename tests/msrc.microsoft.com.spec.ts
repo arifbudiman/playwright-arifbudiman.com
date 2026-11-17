@@ -128,6 +128,9 @@ test.describe('Report Spam', () => {
             } else {
               expect(response.ok()).toBeTruthy();
               isSuccessfullySubmitted = true;
+              if (index < array.length - 1) {
+                await page.waitForTimeout(5000);
+              }
             }
           }
         });
