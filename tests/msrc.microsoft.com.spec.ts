@@ -4,7 +4,7 @@ import path from 'path';
 import emailHeaderUtils from './utils/emailHeaderUtils.js';
 
 const { parseRawEmail, extractSourceIP, extractDate, draftAbuseReport } = emailHeaderUtils;
-const { test } = playwright;
+const { test, expect } = playwright;
 const rawMailFolder = 'D:\\Users\\arifb\\Downloads\\rawMails\\';
 const url = 'https://msrc.microsoft.com/report/abuse?ThreatType=IpAddress&IncidentType=Spam';
 
@@ -99,22 +99,37 @@ test.describe('Report Spam', () => {
             buffer: contentBuffer,
           });
 
-          await page.waitForTimeout(5000);
+          const maxRetries = 5;
+          let attempt = 0;
+          let isSuccessfullySubmitted = false;
 
-          // Submit the form
-          await page.locator('button[form=report-abuse-form]').last().click();
+          while (!isSuccessfullySubmitted && attempt < maxRetries) {
+            attempt++;
 
-          page.on('response', async (response) => {
+            // Start waiting for response BEFORE clicking submit
+            const responsePromise = page.waitForResponse(() => true);
+
+            // Submit the form
+            await page.locator('button[form=report-abuse-form]').last().click();
+
+            const response = await responsePromise;
+
             if (response.status() === 429) {
-              const data = await response.json();
               console.warn(`Hit 429 Too Many Requests on: ${response.url()}`);
-              // console.log(`Response.json: ${data.message}`);
+
+              const data = await response.json();
+              console.log(`Response.json: ${data.message}`);
+
               const match = data.message.match(/(\d+)\s+seconds/);
               const seconds = match ? parseInt(match[1], 10) : 20;
+
+              console.log(`Waiting ${seconds + 2} seconds before retrying...`);
               await page.waitForTimeout((seconds + 2) * 1000);
-              await page.locator('button[form=report-abuse-form]').last().click();
+            } else {
+              expect(response.ok()).toBeTruthy();
+              isSuccessfullySubmitted = true;
             }
-          });
+          }
         });
       }
     });
