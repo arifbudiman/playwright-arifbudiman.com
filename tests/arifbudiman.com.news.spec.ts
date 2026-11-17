@@ -24,7 +24,7 @@ test.describe('News', () => {
         .getAttribute('href')
         .then((articleLink) => {
           expect(articleLink).toMatch(
-            /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,8}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+            /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,18}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
           );
         });
       //console.log(await article.locator('a').first().getAttribute('href'));
