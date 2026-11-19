@@ -99,6 +99,8 @@ test.describe('Report Spam', () => {
             buffer: contentBuffer,
           });
 
+          await page.getByText('For more information on').scrollIntoViewIfNeeded();
+
           const maxRetries = 5;
           let attempt = 0;
           let isSuccessfullySubmitted = false;
@@ -133,7 +135,7 @@ test.describe('Report Spam', () => {
               await expect(page.getByRole('heading', { name: 'Thank you for submitting your' })).toBeVisible();
               isSuccessfullySubmitted = true;
               if (index < array.length - 1) {
-                await page.waitForTimeout(5000);
+                await page.waitForTimeout(2000);
               }
             }
           }
