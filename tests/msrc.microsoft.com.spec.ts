@@ -23,7 +23,7 @@ test.describe('Report Spam', () => {
         const ip = extractSourceIP(headers);
         const date = extractDate(headers);
 
-        test(`Report ${file}`, async ({ page }) => {
+        test(`Submitted: ${file}`, async ({ page }) => {
           await page.goto(url);
 
           // Reporter name
@@ -127,6 +127,10 @@ test.describe('Report Spam', () => {
               await page.waitForTimeout((seconds + 2) * 1000);
             } else {
               expect(response.ok()).toBeTruthy();
+              // https://msrc.microsoft.com/report/abuse/submitted
+              await expect(page).toHaveURL(/.*submitted/, { timeout: 15000 });
+              await expect(page).toHaveTitle('Report Submitted');
+              await expect(page.getByRole('heading', { name: 'Thank you for submitting your' })).toBeVisible();
               isSuccessfullySubmitted = true;
               if (index < array.length - 1) {
                 await page.waitForTimeout(5000);
