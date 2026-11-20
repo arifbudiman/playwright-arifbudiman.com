@@ -40,17 +40,22 @@ test.describe('Report Spam', () => {
             const day = date.parsed.getDate();
             const dateLabel = day + ', ' + month + ', ' + year;
 
-            // Open date selector
-            const datePickerId = await page.getByText('Incident date').getAttribute('for');
-            const datePicker = page.locator('#' + datePickerId);
-            await datePicker.click().then(async () => {
-              const calendarIcon = page.locator('i[data-icon-name=Calendar]');
-              await calendarIcon.click().then(async () => {
-                await page.waitForTimeout(1000);
-                // Select incident date
-                await page.getByLabel(dateLabel, { exact: true }).locator('..').click();
-              });
-            });
+            // Select incident date
+            await page.getByText('Select a date...').click();
+            await page.getByRole('gridcell', { name: dateLabel }).waitFor({ state: 'attached', timeout: 5000 });
+            await page.getByRole('gridcell', { name: dateLabel }).waitFor({ state: 'visible', timeout: 5000 });
+            await page.getByRole('gridcell', { name: dateLabel }).click();
+
+            // const datePickerId = await page.getByText('Incident date').getAttribute('for');
+            // const datePicker = page.locator('#' + datePickerId);
+            // await datePicker.click().then(async () => {
+            //   const calendarIcon = page.locator('i[data-icon-name=Calendar]');
+            //   await calendarIcon.click().then(async () => {
+            //     await page.waitForTimeout(1000);
+            //     // Select incident date
+            //     await page.getByLabel(dateLabel, { exact: true }).locator('..').click();
+            //   });
+            // });
 
             // Construct incident time
             const hours = date.parsed.getHours();
@@ -66,9 +71,9 @@ test.describe('Report Spam', () => {
             const offsetMinutes = String(absOffset % 60).padStart(2, '0');
             // Notice the sign inversion: positive offset means we are behind UTC (-)
             const sign = offset <= 0 ? '+' : '-';
-            // Open timezone selector
-            await page.locator('#timeZoneDropdown-option').click();
             // Select timezone
+            await page.locator('#timeZoneDropdown-option').click();
+            await page.locator('#timeZoneDropdown-list').waitFor({ state: 'visible' });
             await page.getByText(`(GMT${sign}${offsetHours}:${offsetMinutes})`).first().click();
           }
 
@@ -101,6 +106,8 @@ test.describe('Report Spam', () => {
 
           await page.getByText('For more information on').scrollIntoViewIfNeeded();
 
+          await page.waitForTimeout(1000);
+
           const maxRetries = 5;
           let attempt = 0;
           let isSuccessfullySubmitted = false;
@@ -112,7 +119,7 @@ test.describe('Report Spam', () => {
             const responsePromise = page.waitForResponse(() => true);
 
             // Submit the form
-            await page.locator('button[form=report-abuse-form]').last().click();
+            await page.getByRole('button', { name: 'Submit' }).click();
 
             const response = await responsePromise;
 
@@ -135,7 +142,7 @@ test.describe('Report Spam', () => {
               await expect(page.getByRole('heading', { name: 'Thank you for submitting your' })).toBeVisible();
               isSuccessfullySubmitted = true;
               if (index < array.length - 1) {
-                await page.waitForTimeout(2000);
+                await page.waitForTimeout(1000);
               }
             }
           }
