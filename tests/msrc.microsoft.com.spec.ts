@@ -41,10 +41,19 @@ test.describe('Report Spam', () => {
             const dateLabel = day + ', ' + month + ', ' + year;
 
             // Select incident date
-            await page.getByText('Select a date...').click();
-            await page.getByRole('gridcell', { name: dateLabel }).waitFor({ state: 'attached', timeout: 5000 });
-            await page.getByRole('gridcell', { name: dateLabel }).waitFor({ state: 'visible', timeout: 5000 });
-            await page.getByRole('gridcell', { name: dateLabel }).click();
+            const selectDate = page.getByText('Select a date...');
+            const datePicker = page.getByRole('gridcell', { name: dateLabel });
+            expect(async () => {
+              await selectDate.blur();
+              await selectDate.click();
+              await expect(datePicker).toBeVisible({ timeout: 1000 });
+            }).toPass();
+            await datePicker.click();
+
+            // await page.getByText('Select a date...').click();
+            // await page.getByRole('gridcell', { name: dateLabel }).waitFor({ state: 'attached', timeout: 5000 });
+            // await page.getByRole('gridcell', { name: dateLabel }).waitFor({ state: 'visible', timeout: 5000 });
+            // await page.getByRole('gridcell', { name: dateLabel }).click();
 
             // const datePickerId = await page.getByText('Incident date').getAttribute('for');
             // const datePicker = page.locator('#' + datePickerId);
