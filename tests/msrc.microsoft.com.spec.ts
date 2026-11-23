@@ -41,12 +41,12 @@ test.describe('Report Spam', () => {
             const dateLabel = day + ', ' + month + ', ' + year;
 
             // Select incident date
-            const selectDate = page.getByText('Select a date...');
+            const selectDate = page.getByRole('combobox', { name: 'Incident date *' });
             const datePicker = page.getByRole('gridcell', { name: dateLabel });
             expect(async () => {
               await selectDate.blur();
               await selectDate.click();
-              await expect(datePicker).toBeVisible({ timeout: 1000 });
+              await expect(datePicker).toBeVisible({ timeout: 2000 });
             }).toPass();
             await datePicker.click();
 
@@ -134,14 +134,11 @@ test.describe('Report Spam', () => {
 
             if (response.status() === 429) {
               console.warn(`Hit 429 Too Many Requests on: ${response.url()}`);
-
               const data = await response.json();
-              console.log(`Response.json: ${data.message}`);
-
               const match = data.message.match(/(\d+)\s+seconds/);
               const seconds = match ? parseInt(match[1], 10) : 20;
-
-              console.log(`Waiting ${seconds + 2} seconds before retrying...`);
+              const waitUntil = new Date(Date.now() + (seconds + 2) * 1000);
+              console.log(`${data.message} Will retry at ${waitUntil.toLocaleTimeString()}`);
               await page.waitForTimeout((seconds + 2) * 1000);
             } else {
               expect(response.ok()).toBeTruthy();
@@ -150,6 +147,7 @@ test.describe('Report Spam', () => {
               await expect(page).toHaveTitle('Report Submitted');
               await expect(page.getByRole('heading', { name: 'Thank you for submitting your' })).toBeVisible();
               isSuccessfullySubmitted = true;
+              console.log(`Submitted ${index} of ${array.length}`);
               if (index < array.length - 1) {
                 await page.waitForTimeout(1000);
               }
