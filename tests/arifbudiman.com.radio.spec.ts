@@ -35,9 +35,11 @@ test.describe('Radio', () => {
       .locator('body > div > main > section > div > h2:has-text("Recently Played") + div img:nth-child(1)')
       .getAttribute('title');
 
-    const localStorageLastStation = await page.localStorage.getItem('radio_recent_stations').then((d) => {
-      expect(d).not.toBeNull();
-      return JSON.parse(d)[0].name;
+    const localStorageLastStation = await page.localStorage.getItem('radio_recent_stations').then((data) => {
+      if (data === null) {
+        throw new Error('radio_recent_stations was not found in localStorage');
+      }
+      return JSON.parse(data)[0].name as string;
     });
 
     console.log(localStorageLastStation + ' vs. ' + recentStation);
