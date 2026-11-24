@@ -147,7 +147,7 @@ test.describe('Report Spam', () => {
               await expect(page).toHaveTitle('Report Submitted');
               await expect(page.getByRole('heading', { name: 'Thank you for submitting your' })).toBeVisible();
               isSuccessfullySubmitted = true;
-              console.log(`Submitted ${index} of ${array.length}`);
+              console.log(`Submitted ${index + 1} of ${array.length}`);
               if (index < array.length - 1) {
                 await page.waitForTimeout(1000);
               }
